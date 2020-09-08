@@ -1,7 +1,10 @@
 <script lang="ts">
+  import { onMount, onDestroy } from 'svelte';
 	import Asteroid from './parts/Asteroids';
 	import Ship from './parts/Ship';
-	import { randomNumBetweenExcluding } from './parts/helpers';
+  import { randomNumBetweenExcluding } from './parts/helpers';
+  import { screenStore, keysStore, asteroidCountStore, gameDataStore, topScoreStore } from './parts/Stores'
+  import type { ScreenDims, KeysT, GameDataT } from './parts/Types';
 
 	const KEY = {
 		LEFT:  37,
@@ -13,8 +16,7 @@
 		SPACE: 32
 	};
 
-	let objects =
-	{
+	let objects = {
 		ship: [],
 		asteroids: [],
 		bullets: [],
@@ -23,34 +25,45 @@
 
 	let context = null;
 
-	/*
-	 //dane dotyczace okna przegladarki
-  const [screen, setScreen] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight,
-        ratio: window.devicePixelRatio || 1
-      });
+	
+   //dane dotyczace okna przegladarki
+  let screen: ScreenDims;
+  const unsubscribeScreen = screenStore.subscribe(value => { screen = value; });
+  // const [screen, setScreen] = useState({
+  //       width: window.innerWidth,
+  //       height: window.innerHeight,
+  //       ratio: window.devicePixelRatio || 1
+  //     });
   //informacja ktory przycisk jest przycisniety w danym momencie
-  const [keys, setKeys] = useState({
-    left  : 0,
-    right : 0,
-    up    : 0,
-    down  : 0,
-    space : 0,
-  });
+  let keys: KeysT;
+  const unsubscribeKeys = keysStore.subscribe(value => { keys = value; });
+  // const [keys, setKeys] = useState({
+  //   left  : 0,
+  //   right : 0,
+  //   up    : 0,
+  //   down  : 0,
+  //   space : 0,
+  // });
   //ilosc asteroid
-  const [asteroidCount, setAsteroidCount] = useState(3);
+  let asteroidCount: number;
+  const unsubscribeAsteroidCount = asteroidCountStore.subscribe(value => { asteroidCount = value; });
+  //const [asteroidCount, setAsteroidCount] = useState(3);
   //dane gry. Wynik i informacja czy przegrales
-  const [gameData, setGameData] = useState({
-    currentScore: 0,
-    inGame: false
-  })
+  let gameData: GameDataT;
+  const unsubscribeGameData = gameDataStore.subscribe(value => { gameData = value; });
+  // const [gameData, setGameData] = useState({
+  //   currentScore: 0,
+  //   inGame: false
+  // })
   //najlepszy wynik
-  const [topScore, setTopScore] = useState(localStorage['topscore'] || 0);
-  const canvasRef = useRef(null);
+  //moze uzyj czegos innego niz localstorage
+  let topScore: number;
+  const unsubscribeTopScore = topScoreStore.subscribe(value => { topScore = value; });
+  //const [topScore, setTopScore] = useState(localStorage['topscore'] || 0);
+  let canvasRef: HTMLCanvasElement;
 
-  const handleResize = (value, e) => {
-    setScreen({
+  const handleResize = (e: UIEvent) => {
+    screenStore.set({
       width: window.innerWidth,
       height: window.innerHeight,
       ratio: window.devicePixelRatio || 1,
@@ -58,33 +71,60 @@
 }
 
 //obluga przyciskow
-const handleKeys = (value, e) => {
+// const handleKeys = (value, e) => {
+//   let keysTemp = keys;
+//   if(e.keyCode === KEY.LEFT   || e.keyCode === KEY.A) keys.left  = value;
+//   if(e.keyCode === KEY.RIGHT  || e.keyCode === KEY.D) keys.right = value;
+//   if(e.keyCode === KEY.UP     || e.keyCode === KEY.W) keys.up    = value;
+//   if(e.keyCode === KEY.SPACE) keys.space = value;
+//   keysStore.set(keysTemp);
+// }
+const handleKeys = (e: KeyboardEvent) => {
   let keysTemp = keys;
-  if(e.keyCode === KEY.LEFT   || e.keyCode === KEY.A) keys.left  = value;
-  if(e.keyCode === KEY.RIGHT  || e.keyCode === KEY.D) keys.right = value;
-  if(e.keyCode === KEY.UP     || e.keyCode === KEY.W) keys.up    = value;
-  if(e.keyCode === KEY.SPACE) keys.space = value;
-  setKeys(keysTemp);
+  const isPressed = e.type === 'keydown';
+  //TODO zmien to na key i zobacz jakie sa
+  if(e.keyCode === KEY.LEFT   || e.keyCode === KEY.A) keys.left  = isPressed;
+  if(e.keyCode === KEY.RIGHT  || e.keyCode === KEY.D) keys.right = isPressed;
+  if(e.keyCode === KEY.UP     || e.keyCode === KEY.W) keys.up    = isPressed;
+  //TODO obsluz down i s jako keycode?
+  if(e.keyCode === KEY.SPACE) keys.space = isPressed;
+  keysStore.set(keysTemp);
 }
 
 //wykonuje sie podczas pierwszego zaladowania na strone
-useEffect(() => {
-  window.addEventListener('keyup',   handleKeys.bind(this, false));
-  window.addEventListener('keydown', handleKeys.bind(this, true));
-  window.addEventListener('resize',  handleResize.bind(this, false));
+onMount(() => {
+  window.addEventListener('keyup',   handleKeys);
+  window.addEventListener('keydown', handleKeys);
+  window.addEventListener('resize',  handleResize);
 
-  const context2D = canvasRef.current.getContext('2d');
+  const context2D = canvasRef.getContext('2d');
   startGame();
   context = context2D;
   requestAnimationFrame(() => {update()});
+});
+onDestroy(() => {
+  window.removeEventListener('keyup', handleKeys);
+  window.removeEventListener('keydown', handleKeys);
+  //nie dziala teraz
+  window.removeEventListener('resize', handleResize);
+});
+// useEffect(() => {
+//   window.addEventListener('keyup',   handleKeys.bind(this, false));
+//   window.addEventListener('keydown', handleKeys.bind(this, true));
+//   window.addEventListener('resize',  handleResize.bind(this, false));
+
+//   const context2D = canvasRef.getContext('2d');
+//   startGame();
+//   context = context2D;
+//   requestAnimationFrame(() => {update()});
   
-  return () => {
-    window.removeEventListener('keyup', handleKeys);
-    window.removeEventListener('keydown', handleKeys);
-    //nie dziala teraz
-    window.removeEventListener('resize', handleResize);
-  }
-}, [])
+//   return () => {
+//     window.removeEventListener('keyup', handleKeys);
+//     window.removeEventListener('keydown', handleKeys);
+//     //nie dziala teraz
+//     window.removeEventListener('resize', handleResize);
+//   }
+// }, [])
 
 //dzieje sie za kazdym razem kiedy cos sie zmienia na canvas
 const update = () => {
@@ -102,7 +142,7 @@ const update = () => {
   // Next set of asteroids
   if(!objects.asteroids.length){
     let count = asteroidCount + 1;
-    setAsteroidCount(count);
+    asteroidCountStore.set(count);
     generateAsteroids(count);
   }
 
@@ -124,17 +164,14 @@ const update = () => {
 
 const addScore = (points) => {
   if(gameData.inGame){
-    setGameData({...gameData, currentScore: gameData.currentScore + points});
+    gameDataStore.update(gd => ({...gd, currentScore: gd.currentScore + points}));
   }
 }
 
 //zaczyna gre
 //tworzy statek i pierwsze asteroidy
 const startGame = () => {
-  setGameData({
-    inGame: true,
-    currentScore: 0,
-  });
+  gameDataStore.set({ inGame: true, currentScore: 0 });
   // Make ship
   const ship = new Ship({
     position: {
@@ -154,11 +191,11 @@ const startGame = () => {
 //konczy gre
 //zapisuje najlepszy wynik i wyswietla div-a z Game Over
 const gameOver = () => {
-  setGameData({ ...gameData, inGame: false});
+  gameDataStore.set({ ...gameData, inGame: false});
 
   // Replace top score
   if(gameData.currentScore > topScore){
-    setTopScore(gameData.currentScore);
+    topScoreStore.set(gameData.currentScore);
     localStorage['topscore'] = gameData.currentScore;
   }
 }
@@ -199,6 +236,7 @@ const updateObjects = (items, group) => {
   }
 }
 //sprawdza zderzenie sie 2 obiektow np.: czy asteroida zderzyla sie z statkiem
+//type this
 const checkCollisionsWith = (items1, items2) => {
   var a = items1.length - 1;
   var b;
@@ -214,7 +252,7 @@ const checkCollisionsWith = (items1, items2) => {
     }
   }
 }
-
+//type this
 const checkCollision = (obj1, obj2) => {
   var vx = obj1.position.x - obj2.position.x;
   var vy = obj1.position.y - obj2.position.y;
@@ -226,8 +264,7 @@ const checkCollision = (obj1, obj2) => {
 }
 
   //kod ponizej obsluguje koniec gry
-  let endgame;
-  let message;
+  let message: string;
 
   if (gameData.currentScore <= 0) {
     message = '0 points... So sad.';
@@ -237,37 +274,45 @@ const checkCollision = (obj1, obj2) => {
     message = gameData.currentScore + ' Points though :)'
   }
 
-  if(!gameData.inGame){
-    endgame = (
-      <div className="endgame">
-        <p>Game over, man!</p>
-        <p>{message}</p>
-        <button
-          onClick={ startGame.bind(this) }>
-          try again?
-        </button>
-      </div>
-    )
-  }
-	*/
+  // if(!gameData.inGame){
+  //   endgame = (
+  //     <div className="endgame">
+  //       <p>Game over, man!</p>
+  //       <p>{message}</p>
+  //       <button
+  //         on:click={ startGame.bind(this) }>
+  //         try again?
+  //       </button>
+  //     </div>
+  //   )
+  // }
 </script>
 
-<div>
-	{ endgame }
-	<span className="score current-score" >Score: {gameData.currentScore}</span>
-	<span className="score top-score" >Top Score: {topScore}</span>
-	<span className="controls" >
+<div class="container">
+  {#if !gameData.inGame}
+    <div class="endgame">
+      <p>Game over, man!</p>
+      <p>{message}</p>
+      <button
+        on:click={ startGame.bind(this) }>
+        try again?
+      </button>
+    </div>
+  {/if}
+	<span class="score current-score" >Score: {gameData.currentScore}</span>
+	<span class="score top-score" >Top Score: {topScore}</span>
+	<span class="controls" >
 		Use [A][S][W][D] or [←][↑][↓][→] to MOVE<br/>
 		Use [SPACE] to SHOOT
 	</span>
-	<canvas ref={canvasRef}
+	<canvas bind:this={canvasRef}
 		width={screen.width * screen.ratio}
 		height={screen.height * screen.ratio}
 	/>
 </div>
 
 <style>
-	body {
+	.container {
 	padding: 0;
 	margin: 0;
 	font-family: 'PT Mono', serif;
