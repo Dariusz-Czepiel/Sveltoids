@@ -1,8 +1,9 @@
 import Particle from './Particle';
-import { asteroidVertices, randomNumBetween } from './helpers';
-import type { Point } from './Types';
+import { asteroidVertices, randomNumBetween } from '../functional/helpers';
+import type { Point } from '../functional/Types';
 
 export default class Asteroid {
+  private asteroid: void;
   position: Point;
   velocity: Point;
   rotation: number;
@@ -10,7 +11,7 @@ export default class Asteroid {
   radius: number;
   score: number;
   vertices: Point[];
-  delete: boolean;
+  delete: boolean = false;
   //jaki to typ?
   create;
   addScore;

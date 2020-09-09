@@ -1,12 +1,13 @@
-import { rotatePoint } from './helpers';
-import type { Point } from './Types';
+import { rotatePoint } from '../functional/helpers';
+import type { Point } from '../functional/Types';
 
 export default class Bullet {
+  private bullet: void;
   position: Point;
   velocity: Point;
   rotation: number;
   radius: number;
-  delete: boolean;
+  delete: boolean = false;
 
   //type args
   constructor(args) {

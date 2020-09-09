@@ -1,12 +1,13 @@
-import type { Point } from './Types';
+import type { Point } from '../functional/Types';
 
 export default class Particle {
+  private particle: void;
   position: Point;
   velocity: Point;
   radius: number;
   lifeSpan: number;
   inertia: number;
-  delete: boolean;
+  delete: boolean = false;
   
   //type the constructor
   constructor(args) {

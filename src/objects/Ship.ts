@@ -1,9 +1,10 @@
 import Bullet from './Bullet';
 import Particle from './Particle';
-import { rotatePoint, randomNumBetween } from './helpers';
-import type { Point, ArrowKeys } from './Types';
+import { rotatePoint, randomNumBetween } from '../functional/helpers';
+import type { Point, ArrowKeys } from '../functional/Types';
 
 export default class Ship {
+  private ship: void;
   position: Point;
   velocity: Point;
   rotation: number;
@@ -12,7 +13,7 @@ export default class Ship {
   inertia: number;
   radius: number;
   lastShot: number;
-  delete: boolean;
+  delete: boolean = false;
   //jakie to ma typy
   create;
   onDie;
