@@ -29,14 +29,6 @@
 	let context: CanvasRenderingContext2D | null = null;
   let canvasRef: HTMLCanvasElement;
 
-  const handleResize = (e: UIEvent) => {
-    screen.set({
-      width: window.innerWidth,
-      height: window.innerHeight,
-      ratio: window.devicePixelRatio || 1,
-    });
-}
-
 //obluga przyciskow
 const handleKeys = (e: KeyboardEvent) => {
   let keysTemp = $keys;
@@ -58,7 +50,6 @@ const handleKeys = (e: KeyboardEvent) => {
 onMount(() => {
   window.addEventListener('keyup',   handleKeys);
   window.addEventListener('keydown', handleKeys);
-  window.addEventListener('resize',  handleResize);
 
   const context2D = canvasRef.getContext('2d');
   startGame();
@@ -69,8 +60,6 @@ onMount(() => {
 onDestroy(() => {
   window.removeEventListener('keyup', handleKeys);
   window.removeEventListener('keydown', handleKeys);
-  //TODO nie dziala teraz
-  window.removeEventListener('resize', handleResize);
 });
 
 //dzieje sie za kazdym razem kiedy cos sie zmienia na canvas
@@ -203,7 +192,6 @@ const checkCollisionsWith = (items1: GameObjectsTypes, items2: GameObjectsTypes)
     }
   }
 }
-//type this
 const checkCollision = (obj1: GameObjectsBasicTypes, obj2: GameObjectsBasicTypes) => {
   var vx = obj1.position.x - obj2.position.x;
   var vy = obj1.position.y - obj2.position.y;
