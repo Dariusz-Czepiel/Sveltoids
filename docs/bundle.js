@@ -78,6 +78,9 @@ var app = (function () {
     function children(element) {
         return Array.from(element.childNodes);
     }
+    function set_style(node, key, value, important) {
+        node.style.setProperty(key, value, important ? 'important' : '');
+    }
     function custom_event(type, detail) {
         const e = document.createEvent('CustomEvent');
         e.initCustomEvent(type, false, false, detail);
@@ -755,7 +758,7 @@ var app = (function () {
 
     const file = "src\\UI.svelte";
 
-    // (8:0) {#if !gameData.inGame}
+    // (11:0) {#if !gameData.inGame}
     function create_if_block(ctx) {
     	let div;
     	let p0;
@@ -778,12 +781,13 @@ var app = (function () {
     			t3 = space();
     			button = element("button");
     			button.textContent = "try again?";
-    			add_location(p0, file, 9, 4, 177);
-    			add_location(p1, file, 10, 4, 205);
-    			attr_dev(button, "class", "svelte-1u3rjuu");
-    			add_location(button, file, 11, 4, 227);
-    			attr_dev(div, "class", "endgame svelte-1u3rjuu");
-    			add_location(div, file, 8, 4, 150);
+    			add_location(p0, file, 12, 4, 351);
+    			add_location(p1, file, 13, 4, 379);
+    			attr_dev(button, "class", "svelte-4iyxfz");
+    			add_location(button, file, 14, 4, 401);
+    			attr_dev(div, "class", "endgame svelte-4iyxfz");
+    			set_style(div, "--eg-font-size", /*endGameFontSize*/ ctx[5]);
+    			add_location(div, file, 11, 0, 281);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -795,7 +799,7 @@ var app = (function () {
     			append_dev(div, button);
 
     			if (!mounted) {
-    				dispose = listen_dev(button, "click", /*click_handler*/ ctx[4], false, false, false);
+    				dispose = listen_dev(button, "click", /*click_handler*/ ctx[7], false, false, false);
     				mounted = true;
     			}
     		},
@@ -813,7 +817,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(8:0) {#if !gameData.inGame}",
+    		source: "(11:0) {#if !gameData.inGame}",
     		ctx
     	});
 
@@ -822,18 +826,19 @@ var app = (function () {
 
     function create_fragment(ctx) {
     	let t0;
-    	let span0;
+    	let div3;
+    	let div0;
     	let t1;
     	let t2_value = /*gameData*/ ctx[0].currentScore + "";
     	let t2;
     	let t3;
-    	let span1;
+    	let div1;
     	let t4;
+    	let br;
     	let t5;
     	let t6;
-    	let span2;
+    	let div2;
     	let t7;
-    	let br;
     	let t8;
     	let if_block = !/*gameData*/ ctx[0].inGame && create_if_block(ctx);
 
@@ -841,25 +846,29 @@ var app = (function () {
     		c: function create() {
     			if (if_block) if_block.c();
     			t0 = space();
-    			span0 = element("span");
+    			div3 = element("div");
+    			div0 = element("div");
     			t1 = text("Score: ");
     			t2 = text(t2_value);
     			t3 = space();
-    			span1 = element("span");
-    			t4 = text("Top Score: ");
-    			t5 = text(/*topScore*/ ctx[2]);
-    			t6 = space();
-    			span2 = element("span");
-    			t7 = text("Use [A][S][W][D] or [←][↑][↓][→] to MOVE");
+    			div1 = element("div");
+    			t4 = text("Use [A][S][W][D] or [←][↑][↓][→] to MOVE");
     			br = element("br");
-    			t8 = text("\r\n    Use [SPACE] to SHOOT");
-    			attr_dev(span0, "class", "score current-score svelte-1u3rjuu");
-    			add_location(span0, file, 16, 0, 322);
-    			attr_dev(span1, "class", "score top-score svelte-1u3rjuu");
-    			add_location(span1, file, 17, 0, 396);
-    			add_location(br, file, 19, 44, 527);
-    			attr_dev(span2, "class", "controls svelte-1u3rjuu");
-    			add_location(span2, file, 18, 0, 457);
+    			t5 = text("\r\n\t\tUse [SPACE] to SHOOT");
+    			t6 = space();
+    			div2 = element("div");
+    			t7 = text("Top Score: ");
+    			t8 = text(/*topScore*/ ctx[2]);
+    			attr_dev(div0, "class", "score svelte-4iyxfz");
+    			add_location(div0, file, 20, 1, 562);
+    			add_location(br, file, 22, 42, 693);
+    			attr_dev(div1, "class", "score controls svelte-4iyxfz");
+    			add_location(div1, file, 21, 1, 620);
+    			attr_dev(div2, "class", "score svelte-4iyxfz");
+    			add_location(div2, file, 25, 1, 734);
+    			attr_dev(div3, "class", "ui-top-container svelte-4iyxfz");
+    			set_style(div3, "--font-size", /*baseFontSize*/ ctx[4]);
+    			add_location(div3, file, 19, 0, 492);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -867,18 +876,19 @@ var app = (function () {
     		m: function mount(target, anchor) {
     			if (if_block) if_block.m(target, anchor);
     			insert_dev(target, t0, anchor);
-    			insert_dev(target, span0, anchor);
-    			append_dev(span0, t1);
-    			append_dev(span0, t2);
-    			insert_dev(target, t3, anchor);
-    			insert_dev(target, span1, anchor);
-    			append_dev(span1, t4);
-    			append_dev(span1, t5);
-    			insert_dev(target, t6, anchor);
-    			insert_dev(target, span2, anchor);
-    			append_dev(span2, t7);
-    			append_dev(span2, br);
-    			append_dev(span2, t8);
+    			insert_dev(target, div3, anchor);
+    			append_dev(div3, div0);
+    			append_dev(div0, t1);
+    			append_dev(div0, t2);
+    			append_dev(div3, t3);
+    			append_dev(div3, div1);
+    			append_dev(div1, t4);
+    			append_dev(div1, br);
+    			append_dev(div1, t5);
+    			append_dev(div3, t6);
+    			append_dev(div3, div2);
+    			append_dev(div2, t7);
+    			append_dev(div2, t8);
     		},
     		p: function update(ctx, [dirty]) {
     			if (!/*gameData*/ ctx[0].inGame) {
@@ -895,18 +905,14 @@ var app = (function () {
     			}
 
     			if (dirty & /*gameData*/ 1 && t2_value !== (t2_value = /*gameData*/ ctx[0].currentScore + "")) set_data_dev(t2, t2_value);
-    			if (dirty & /*topScore*/ 4) set_data_dev(t5, /*topScore*/ ctx[2]);
+    			if (dirty & /*topScore*/ 4) set_data_dev(t8, /*topScore*/ ctx[2]);
     		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
     			if (if_block) if_block.d(detaching);
     			if (detaching) detach_dev(t0);
-    			if (detaching) detach_dev(span0);
-    			if (detaching) detach_dev(t3);
-    			if (detaching) detach_dev(span1);
-    			if (detaching) detach_dev(t6);
-    			if (detaching) detach_dev(span2);
+    			if (detaching) detach_dev(div3);
     		}
     	};
 
@@ -923,11 +929,14 @@ var app = (function () {
 
     function instance($$self, $$props, $$invalidate) {
     	
+    	let { isMobile } = $$props;
     	let { gameData } = $$props;
     	let { message } = $$props;
     	let { topScore } = $$props;
     	let { startGame } = $$props;
-    	const writable_props = ["gameData", "message", "topScore", "startGame"];
+    	const baseFontSize = isMobile ? "2em" : "1.2em";
+    	const endGameFontSize = Number(baseFontSize[0]) * 1.5 + "em";
+    	const writable_props = ["isMobile", "gameData", "message", "topScore", "startGame"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<UI> was created with unknown prop '${key}'`);
@@ -938,15 +947,25 @@ var app = (function () {
     	const click_handler = () => startGame();
 
     	$$self.$$set = $$props => {
+    		if ("isMobile" in $$props) $$invalidate(6, isMobile = $$props.isMobile);
     		if ("gameData" in $$props) $$invalidate(0, gameData = $$props.gameData);
     		if ("message" in $$props) $$invalidate(1, message = $$props.message);
     		if ("topScore" in $$props) $$invalidate(2, topScore = $$props.topScore);
     		if ("startGame" in $$props) $$invalidate(3, startGame = $$props.startGame);
     	};
 
-    	$$self.$capture_state = () => ({ gameData, message, topScore, startGame });
+    	$$self.$capture_state = () => ({
+    		isMobile,
+    		gameData,
+    		message,
+    		topScore,
+    		startGame,
+    		baseFontSize,
+    		endGameFontSize
+    	});
 
     	$$self.$inject_state = $$props => {
+    		if ("isMobile" in $$props) $$invalidate(6, isMobile = $$props.isMobile);
     		if ("gameData" in $$props) $$invalidate(0, gameData = $$props.gameData);
     		if ("message" in $$props) $$invalidate(1, message = $$props.message);
     		if ("topScore" in $$props) $$invalidate(2, topScore = $$props.topScore);
@@ -957,7 +976,16 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [gameData, message, topScore, startGame, click_handler];
+    	return [
+    		gameData,
+    		message,
+    		topScore,
+    		startGame,
+    		baseFontSize,
+    		endGameFontSize,
+    		isMobile,
+    		click_handler
+    	];
     }
 
     class UI extends SvelteComponentDev {
@@ -965,6 +993,7 @@ var app = (function () {
     		super(options);
 
     		init(this, options, instance, create_fragment, safe_not_equal, {
+    			isMobile: 6,
     			gameData: 0,
     			message: 1,
     			topScore: 2,
@@ -981,6 +1010,10 @@ var app = (function () {
     		const { ctx } = this.$$;
     		const props = options.props || {};
 
+    		if (/*isMobile*/ ctx[6] === undefined && !("isMobile" in props)) {
+    			console.warn("<UI> was created without expected prop 'isMobile'");
+    		}
+
     		if (/*gameData*/ ctx[0] === undefined && !("gameData" in props)) {
     			console.warn("<UI> was created without expected prop 'gameData'");
     		}
@@ -996,6 +1029,14 @@ var app = (function () {
     		if (/*startGame*/ ctx[3] === undefined && !("startGame" in props)) {
     			console.warn("<UI> was created without expected prop 'startGame'");
     		}
+    	}
+
+    	get isMobile() {
+    		throw new Error("<UI>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set isMobile(value) {
+    		throw new Error("<UI>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	get gameData() {
@@ -1252,7 +1293,7 @@ var app = (function () {
 
     /* src\App.svelte generated by Svelte v3.24.1 */
 
-    const { Object: Object_1, console: console_1 } = globals;
+    const { Object: Object_1 } = globals;
 
     const file$2 = "src\\App.svelte";
 
@@ -1266,16 +1307,17 @@ var app = (function () {
 
     	ui = new UI({
     			props: {
-    				gameData: /*$gameData*/ ctx[2],
-    				message: /*message*/ ctx[1],
-    				topScore: /*$topScore*/ ctx[3],
-    				startGame: /*startGame*/ ctx[4]
+    				gameData: /*$gameData*/ ctx[3],
+    				message: /*message*/ ctx[2],
+    				topScore: /*$topScore*/ ctx[4],
+    				startGame: /*startGame*/ ctx[5],
+    				isMobile: /*isMobile*/ ctx[1]
     			},
     			$$inline: true
     		});
 
     	function gamecanvas_canvasRef_binding(value) {
-    		/*gamecanvas_canvasRef_binding*/ ctx[5].call(null, value);
+    		/*gamecanvas_canvasRef_binding*/ ctx[6].call(null, value);
     	}
 
     	let gamecanvas_props = {};
@@ -1294,7 +1336,7 @@ var app = (function () {
     			t = space();
     			create_component(gamecanvas.$$.fragment);
     			attr_dev(div, "class", "container svelte-vviivg");
-    			add_location(div, file$2, 204, 0, 6880);
+    			add_location(div, file$2, 204, 0, 6883);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1308,9 +1350,10 @@ var app = (function () {
     		},
     		p: function update(ctx, [dirty]) {
     			const ui_changes = {};
-    			if (dirty & /*$gameData*/ 4) ui_changes.gameData = /*$gameData*/ ctx[2];
-    			if (dirty & /*message*/ 2) ui_changes.message = /*message*/ ctx[1];
-    			if (dirty & /*$topScore*/ 8) ui_changes.topScore = /*$topScore*/ ctx[3];
+    			if (dirty & /*$gameData*/ 8) ui_changes.gameData = /*$gameData*/ ctx[3];
+    			if (dirty & /*message*/ 4) ui_changes.message = /*message*/ ctx[2];
+    			if (dirty & /*$topScore*/ 16) ui_changes.topScore = /*$topScore*/ ctx[4];
+    			if (dirty & /*isMobile*/ 2) ui_changes.isMobile = /*isMobile*/ ctx[1];
     			ui.$set(ui_changes);
     			const gamecanvas_changes = {};
 
@@ -1364,9 +1407,9 @@ var app = (function () {
     	validate_store(asteroidCount, "asteroidCount");
     	component_subscribe($$self, asteroidCount, $$value => $$invalidate(11, $asteroidCount = $$value));
     	validate_store(gameData, "gameData");
-    	component_subscribe($$self, gameData, $$value => $$invalidate(2, $gameData = $$value));
+    	component_subscribe($$self, gameData, $$value => $$invalidate(3, $gameData = $$value));
     	validate_store(topScore, "topScore");
-    	component_subscribe($$self, topScore, $$value => $$invalidate(3, $topScore = $$value));
+    	component_subscribe($$self, topScore, $$value => $$invalidate(4, $topScore = $$value));
     	
 
     	// const KEY = {
@@ -1425,11 +1468,9 @@ var app = (function () {
     		}
 
     		//check if mobile
-    		if ("maxTouchPoints" in navigator || "msMacTouchPoints" in navigator) isMobile = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-
-    		console.log(isMobile);
-    		alert(isMobile ? "yes" : "no");
-    	});
+    		if ("maxTouchPoints" in navigator || "msMacTouchPoints" in navigator) $$invalidate(1, isMobile = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0);
+    	}); //console.log(isMobile)
+    	//alert(isMobile ? "yes" : "no");
 
     	onDestroy(() => {
     		window.removeEventListener("keyup", handleKeys);
@@ -1602,7 +1643,7 @@ var app = (function () {
     	const writable_props = [];
 
     	Object_1.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1.warn(`<App> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
     	let { $$slots = {}, $$scope } = $$props;
@@ -1652,8 +1693,8 @@ var app = (function () {
     		if ("objects" in $$props) objects = $$props.objects;
     		if ("context" in $$props) context = $$props.context;
     		if ("canvasRef" in $$props) $$invalidate(0, canvasRef = $$props.canvasRef);
-    		if ("isMobile" in $$props) isMobile = $$props.isMobile;
-    		if ("message" in $$props) $$invalidate(1, message = $$props.message);
+    		if ("isMobile" in $$props) $$invalidate(1, isMobile = $$props.isMobile);
+    		if ("message" in $$props) $$invalidate(2, message = $$props.message);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -1661,20 +1702,21 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*$gameData, $topScore*/ 12) {
+    		if ($$self.$$.dirty & /*$gameData, $topScore*/ 24) {
     			//kod ponizej obsluguje koniec gry
     			 if ($gameData.currentScore <= 0) {
-    				$$invalidate(1, message = "0 points... So sad.");
+    				$$invalidate(2, message = "0 points... So sad.");
     			} else if ($gameData.currentScore >= $topScore) {
-    				$$invalidate(1, message = "Top score with " + $gameData.currentScore + " points. Woo!");
+    				$$invalidate(2, message = "Top score with " + $gameData.currentScore + " points. Woo!");
     			} else {
-    				$$invalidate(1, message = $gameData.currentScore + " Points though :)");
+    				$$invalidate(2, message = $gameData.currentScore + " Points though :)");
     			}
     		}
     	};
 
     	return [
     		canvasRef,
+    		isMobile,
     		message,
     		$gameData,
     		$topScore,

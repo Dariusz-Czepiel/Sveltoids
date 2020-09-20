@@ -63,8 +63,8 @@ onMount(() => {
   //check if mobile
   if('maxTouchPoints' in navigator || 'msMacTouchPoints' in navigator)
     isMobile = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-  console.log(isMobile)
-  alert(isMobile ? "yes" : "no");
+  //console.log(isMobile)
+  //alert(isMobile ? "yes" : "no");
 
 });
 
@@ -226,7 +226,7 @@ const checkCollision = (obj1: GameObjectsBasicTypes, obj2: GameObjectsBasicTypes
 </script>
 
 <div class="container">
-  <UI gameData={$gameData} {message} topScore={$topScore} {startGame} />
+  <UI gameData={$gameData} {message} topScore={$topScore} {startGame} {isMobile} />
   <GameCanvas bind:canvasRef={canvasRef} />
 </div>
 

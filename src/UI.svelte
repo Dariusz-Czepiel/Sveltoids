@@ -1,29 +1,43 @@
 <script lang="ts">
     import type { GameDataT } from './functional/Types';
 
+	export let isMobile: boolean;
     export let gameData: GameDataT;
     export let message: string;
     export let topScore: number;
-    export let startGame: () => void;
+	export let startGame: () => void;
+	
+	const baseFontSize = isMobile ? "2em" : "1.2em";
+	const endGameFontSize = Number(baseFontSize[0]) * 1.5 + "em";
 </script>
 
 {#if !gameData.inGame}
-    <div class="endgame">
+<div class="endgame" style="--eg-font-size: {endGameFontSize};">
     <p>Game over, man!</p>
     <p>{message}</p>
     <button on:click={ () => startGame() }>
         try again?
     </button>
-    </div>
+</div>
 {/if}
-<span class="score current-score" >Score: {gameData.currentScore}</span>
-<span class="score top-score" >Top Score: {topScore}</span>
-<span class="controls" >
-    Use [A][S][W][D] or [←][↑][↓][→] to MOVE<br/>
-    Use [SPACE] to SHOOT
-</span>
+<div class="ui-top-container" style="--font-size: {baseFontSize};">
+	<div class="score">Score: {gameData.currentScore}</div>
+	<div class="score controls" >
+		Use [A][S][W][D] or [←][↑][↓][→] to MOVE<br/>
+		Use [SPACE] to SHOOT
+	</div>
+	<div class="score">Top Score: {topScore}</div>
+</div>
 
 <style>
+.ui-top-container {
+	display: flex;
+	width: calc(100% - 20px);
+	justify-content: space-between;
+	flex-direction: row;
+	margin: 0 10px 0 10px;
+}
+/* moze zmien to pozycjonowanie na cos fajniejszego */
 .endgame{
 	position: absolute;
 	top: 50%;
@@ -32,40 +46,25 @@
 	padding: 16px;
 	z-index: 1;
 	text-align: center;
-	font-size: 1.2rem;
-  }
-  .current-score {
-	left: 20px;
-  }
-  .top-score {
-	right: 20px;
+	font-size: var(--eg-font-size);
   }
   .score {
-	display: block;
-	position: absolute;
-	top: 15px;
 	z-index: 1;
-	font-size: 1.3rem;
+	font-size: var(--font-size);
   }
   .controls {
-	display: block;
-	position: absolute;
-	top: 15px;
-	left: 50%;
-	transform: translate(-50%, 0);
-	z-index: 1;
-	font-size: 1rem;
+
 	text-align: center;
-	line-height: 1.6;
+	line-height: 1.5;
+	letter-spacing: 0.05em;
   }
   button{
 	border: 4px solid #ffffff;
 	background-color: transparent;
 	color: #ffffff;
-	font-size: 1rem;
+	font-size: var(--font-size);
 	padding: 10px 20px;
 	margin: 10px;
-	/*font-family: 'PT Mono', serif;*/
 	cursor: pointer;
   }
   button:hover{
