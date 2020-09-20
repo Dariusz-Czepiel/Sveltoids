@@ -1,5 +1,10 @@
 import { rotatePoint } from '../functional/helpers';
-import type { Point } from '../functional/Types';
+import type Ship from './Ship';
+import type { Point , RenderT } from '../functional/Types';
+
+export type BulletArgs = {
+  ship: Ship
+};
 
 export default class Bullet {
   private bullet: void;
@@ -10,7 +15,7 @@ export default class Bullet {
   delete: boolean = false;
 
   //type args
-  constructor(args) {
+  constructor(args: BulletArgs) {
     let posDelta = rotatePoint({x:0, y:-20}, {x:0,y:0}, args.ship.rotation * Math.PI / 180);
     this.position = {
       x: args.ship.position.x + posDelta.x,
@@ -29,7 +34,7 @@ export default class Bullet {
   }
 
   //type state
-  render(state){
+  render(state: RenderT){
     // Move
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;

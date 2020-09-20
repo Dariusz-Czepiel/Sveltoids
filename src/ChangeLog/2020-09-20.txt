@@ -1,0 +1,3 @@
+App Version: 0.2
+
+* When you destroy the smallest asteroid a new one appears

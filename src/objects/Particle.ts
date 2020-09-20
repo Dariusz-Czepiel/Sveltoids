@@ -1,4 +1,11 @@
-import type { Point } from '../functional/Types';
+import type { Point, RenderT } from '../functional/Types';
+
+export type ParticleArgs = {
+  position: Point,
+  velocity: Point,
+  size: number,
+  lifeSpan: number,
+};
 
 export default class Particle {
   private particle: void;
@@ -10,7 +17,7 @@ export default class Particle {
   delete: boolean = false;
   
   //type the constructor
-  constructor(args) {
+  constructor(args: ParticleArgs) {
     this.position = args.position
     this.velocity = args.velocity
     this.radius = args.size;
@@ -22,7 +29,7 @@ export default class Particle {
     this.delete = true;
   }
 
-  render(state){
+  render(state: RenderT){
     // Move
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;

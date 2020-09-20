@@ -13,11 +13,14 @@ export interface KeysT {
     space: boolean
 }
 export interface GameDataT { currentScore: number, inGame: boolean }
-export type GameObjects = { ship: Ship[], asteroids: Asteroids[], bullets: Bullet[], particles: Particle[] }
+export interface GameObjects { ship: Ship[], asteroids: Asteroids[], bullets: Bullet[], particles: Particle[] }
 export type GameObjectsBasicTypes = Unpacked<GameObjects[keyof GameObjects]>;
 export type GameObjectsTypes = GameObjects[keyof GameObjects];
+export type CreateObjectT = <T extends keyof GameObjects>(item: Unpacked<GameObjects[T]>, group: T) => void;
+export interface RenderT { screen: ScreenDims, context: CanvasRenderingContext2D, keys: KeysT, asteroidCount: number, topScore: number, currentScore: number, inGame: boolean };
 //zamien to na enum
 export type ArrowKeys = 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM';
+export interface GameObjectClass { destroy: () => void, render: (state: RenderT) => void }
 
 //utility
 export type Unpacked<T> = T extends (infer U)[] ? U : T;

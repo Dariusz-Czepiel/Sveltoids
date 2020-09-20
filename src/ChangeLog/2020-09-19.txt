@@ -1,0 +1,4 @@
+App Version: 0.1
+
+* Converted the project to Svelte + TypeScript
+* Typed everything

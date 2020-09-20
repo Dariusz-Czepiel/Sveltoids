@@ -7,7 +7,7 @@
   
   import { randomNumBetweenExcluding } from './functional/helpers';
   import { screen, keys, asteroidCount, gameData, topScore } from './functional/Stores'
-  import type { GameObjects, Unpacked, GameObjectsTypes, GameObjectsBasicTypes } from './functional/Types';
+  import type { GameObjects, GameObjectsTypes, GameObjectsBasicTypes, CreateObjectT, ScreenDims, ArrowKeys, KeysT } from './functional/Types';
 
 	// const KEY = {
 	// 	LEFT:  37,
@@ -26,8 +26,9 @@
 		particles: [],
 	};
 
-	let context: CanvasRenderingContext2D | null = null;
+	let context: CanvasRenderingContext2D;
   let canvasRef: HTMLCanvasElement;
+  let isMobile: boolean = false;
 
 //obluga przyciskow
 const handleKeys = (e: KeyboardEvent) => {
@@ -53,8 +54,18 @@ onMount(() => {
 
   const context2D = canvasRef.getContext('2d');
   startGame();
-  context = context2D;
-  requestAnimationFrame(() => {update()});
+  if(context2D != null)
+  {
+    context = context2D;
+    requestAnimationFrame(() => {update()});
+  }
+
+  //check if mobile
+  if('maxTouchPoints' in navigator || 'msMacTouchPoints' in navigator)
+    isMobile = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+  console.log(isMobile)
+  alert(isMobile ? "yes" : "no");
+
 });
 
 onDestroy(() => {
@@ -64,37 +75,34 @@ onDestroy(() => {
 
 //dzieje sie za kazdym razem kiedy cos sie zmienia na canvas
 const update = () => {
-  if(context != null)
-  {
-    const contextTemp = context;
-    contextTemp.save();
-    contextTemp.scale($screen.ratio, $screen.ratio);
-  
-    // Motion trail
-    contextTemp.fillStyle = '#000';
-    contextTemp.globalAlpha = 0.4;
-    contextTemp.fillRect(0, 0, $screen.width, $screen.height);
-    contextTemp.globalAlpha = 1;
-  
-    // Next set of asteroids
-    if(!objects.asteroids.length){
-      let count = $asteroidCount + 1;
-      asteroidCount.set(count);
-      generateAsteroids(count);
-    }
-  
-    // Check for colisions
-    checkCollisionsWith(objects.bullets, objects.asteroids);
-    checkCollisionsWith(objects.ship, objects.asteroids);
-  
-    // Remove or render
-    updateObjects(objects.particles, 'particles')
-    updateObjects(objects.asteroids, 'asteroids')
-    updateObjects(objects.bullets, 'bullets')
-    updateObjects(objects.ship, 'ship')
-  
-    contextTemp.restore();
+  const contextTemp = context;
+  contextTemp.save();
+  contextTemp.scale($screen.ratio, $screen.ratio);
+
+  // Motion trail
+  contextTemp.fillStyle = '#000';
+  contextTemp.globalAlpha = 0.4;
+  contextTemp.fillRect(0, 0, $screen.width, $screen.height);
+  contextTemp.globalAlpha = 1;
+
+  // Next set of asteroids
+  if(!objects.asteroids.length){
+    let count = $asteroidCount + 1;
+    asteroidCount.set(count);
+    generateAsteroids(count);
   }
+
+  // Check for colisions
+  checkCollisionsWith(objects.bullets, objects.asteroids);
+  checkCollisionsWith(objects.ship, objects.asteroids);
+
+  // Remove or render
+  updateObjects(objects.particles, 'particles')
+  updateObjects(objects.asteroids, 'asteroids')
+  updateObjects(objects.bullets, 'bullets')
+  updateObjects(objects.ship, 'ship')
+
+  contextTemp.restore();
   // Next frame
   requestAnimationFrame(() => {update()});
 }
@@ -156,10 +164,13 @@ const generateAsteroids = (howMany: number) => {
   }
 }
 
+
+
 //dodaje statki,asteroidy,pociski i efekty
-const createObject = <T extends keyof GameObjects>(item: Unpacked<GameObjects[T]>, group: T) => {
+const createObject: CreateObjectT = (item, group) => {
   (objects[group] as typeof item[]).push(item);
 }
+
 //aktualizuje statki,asteroidy,pociski i efekty
 const updateObjects = <T extends keyof GameObjects>(items: GameObjects[T], group: T) => {
   //console.log(items);

@@ -1,7 +1,21 @@
 import Bullet from './Bullet';
 import Particle from './Particle';
 import { rotatePoint, randomNumBetween } from '../functional/helpers';
-import type { Point, ArrowKeys } from '../functional/Types';
+import type { Point, ArrowKeys, CreateObjectT, RenderT } from '../functional/Types';
+
+export type ShipArgs = {
+  position: Point;
+  //velocity: Point;
+  //rotation: number;
+  //rotationSpeed: number;
+  //speed: number;
+  //inertia: number;
+  //radius: number;
+  //lastShot: number;
+  //delete: boolean;
+  create: CreateObjectT;
+  onDie: () => void;
+};
 
 export default class Ship {
   private ship: void;
@@ -15,18 +29,18 @@ export default class Ship {
   lastShot: number;
   delete: boolean = false;
   //jakie to ma typy
-  create;
-  onDie;
+  create: CreateObjectT;
+  onDie: () => void;
 
   //type constructor
-  constructor(args) {
+  constructor(args: ShipArgs) {
     this.position = args.position
     this.velocity = {
       x: 0,
       y: 0
     }
     this.rotation = 0;
-    this.rotationSpeed = 6;
+    this.rotationSpeed = 4;
     this.speed = 0.15;
     this.inertia = 0.99;
     this.radius = 20;
@@ -89,7 +103,7 @@ export default class Ship {
   }
 
   //type state
-  render(state){
+  render(state: RenderT){
     // Controls
     if(state.keys.up){
       this.accelerate(1);

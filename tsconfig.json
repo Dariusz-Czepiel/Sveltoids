@@ -3,7 +3,7 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "strictBindCallApply": true,
+    "strictBindCallApply": true
   },
   "extends": "@tsconfig/svelte/tsconfig.json",
   "include": ["src/**/*", "src/node_modules"],

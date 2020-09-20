@@ -1,8 +1,15 @@
 import Particle from './Particle';
 import { asteroidVertices, randomNumBetween } from '../functional/helpers';
-import type { Point } from '../functional/Types';
+import type { Point, CreateObjectT, RenderT, GameObjectClass } from '../functional/Types';
 
-export default class Asteroid {
+export type AsteroidArgs = {
+  position: Point;
+  size: number;
+  create: CreateObjectT;
+  addScore: (value: number) => void;
+};
+
+export default class Asteroid implements GameObjectClass {
   private asteroid: void;
   position: Point;
   velocity: Point;
@@ -12,12 +19,10 @@ export default class Asteroid {
   score: number;
   vertices: Point[];
   delete: boolean = false;
-  //jaki to typ?
-  create;
-  addScore;
+  create: CreateObjectT;
+  addScore: (value: number) => void;
 
-  //type args
-  constructor(args) {
+  constructor(args: AsteroidArgs) {
     this.position = args.position
     this.velocity = {
       x: randomNumBetween(-1.5, 1.5),
@@ -57,7 +62,6 @@ export default class Asteroid {
     if(this.radius > 10){
       for (let i = 0; i < 2; i++) {
         let asteroid = new Asteroid({
-
           size: this.radius/2,
           position: {
             x: randomNumBetween(-10, 20)+this.position.x,
@@ -69,10 +73,21 @@ export default class Asteroid {
         this.create(asteroid, 'asteroids');
       }
     }
+    else{
+      let asteroid = new Asteroid({
+        size: 80,
+        position: {
+          x: randomNumBetween(-10, 20)+this.position.x,
+          y: randomNumBetween(-10, 20)+this.position.y
+        },
+        create: this.create.bind(this),
+        addScore: this.addScore.bind(this)
+      });
+      this.create(asteroid, 'asteroids');
+    }
   }
 
-  //type state
-  render(state){
+  render(state: RenderT){
     // Move
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
