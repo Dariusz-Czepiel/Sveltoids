@@ -1,7 +1,7 @@
 import Bullet from './Bullet';
 import Particle from './Particle';
 import { rotatePoint, randomNumBetween } from '../functional/helpers';
-import type { Point, ArrowKeys, CreateObjectT, RenderT } from '../functional/Types';
+import type { Point, ArrowKeys, CreateObjectT, RenderT, GameObjectClass, Collidable } from '../functional/Types';
 
 export type ShipArgs = {
   position: Point;
@@ -17,7 +17,7 @@ export type ShipArgs = {
   onDie: () => void;
 };
 
-export default class Ship {
+export default class Ship implements GameObjectClass, Collidable {
   private ship: void;
   position: Point;
   velocity: Point;
@@ -49,7 +49,7 @@ export default class Ship {
     this.onDie = args.onDie;
   }
 
-  destroy(){
+  onCollision() {
     this.delete = true;
     this.onDie();
 
@@ -69,7 +69,30 @@ export default class Ship {
       });
       this.create(particle, 'particles');
     }
+    return { ship_explode: undefined };
   }
+
+  // destroy(){
+  //   this.delete = true;
+  //   this.onDie();
+
+  //   // Explode
+  //   for (let i = 0; i < 60; i++) {
+  //     const particle = new Particle({
+  //       lifeSpan: randomNumBetween(60, 100),
+  //       size: randomNumBetween(1, 4),
+  //       position: {
+  //         x: this.position.x + randomNumBetween(-this.radius/4, this.radius/4),
+  //         y: this.position.y + randomNumBetween(-this.radius/4, this.radius/4)
+  //       },
+  //       velocity: {
+  //         x: randomNumBetween(-1.5, 1.5),
+  //         y: randomNumBetween(-1.5, 1.5)
+  //       }
+  //     });
+  //     this.create(particle, 'particles');
+  //   }
+  // }
 
   rotate(dir: ArrowKeys){
     if (dir == 'LEFT') {

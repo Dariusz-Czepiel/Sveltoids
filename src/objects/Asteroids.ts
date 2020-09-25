@@ -1,6 +1,7 @@
 import Particle from './Particle';
-import { asteroidVertices, randomNumBetween } from '../functional/helpers';
-import type { Point, CreateObjectT, RenderT, GameObjectClass } from '../functional/Types';
+import { asteroidVertices, randomNumBetween, randomNumBetweenExcluding } from '../functional/helpers';
+import type { Point, CreateObjectT, RenderT, GameObjectClass, Collidable, GameObjectsBasicTypes } from '../functional/Types';
+import type Ship from './Ship';
 
 export type AsteroidArgs = {
   position: Point;
@@ -9,7 +10,7 @@ export type AsteroidArgs = {
   addScore: (value: number) => void;
 };
 
-export default class Asteroid implements GameObjectClass {
+export default class Asteroid implements GameObjectClass, Collidable {
   private asteroid: void;
   position: Point;
   velocity: Point;
@@ -37,7 +38,37 @@ export default class Asteroid implements GameObjectClass {
     this.vertices = asteroidVertices(8, args.size)
   }
 
-  destroy(){
+  private split() {
+    for (let i = 0; i < 2; i++) {
+      let asteroid = new Asteroid({
+        size: this.radius/2,
+        position: {
+          x: randomNumBetween(-10, 20)+this.position.x,
+          y: randomNumBetween(-10, 20)+this.position.y
+        },
+        create: this.create.bind(this),
+        addScore: this.addScore.bind(this)
+      });
+      this.create(asteroid, 'asteroids');
+    }
+  }
+
+  private destroyed(ship: Ship) {
+    console.log(screen);
+    let asteroid = new Asteroid({
+      size: 80,
+      position: {
+        x: randomNumBetweenExcluding(0, screen.width, ship.position.x-60, ship.position.x+100),
+        y: randomNumBetweenExcluding(0, screen.height, ship.position.y-60, ship.position.y+100)
+      },
+      create: this.create.bind(this),
+      addScore: this.addScore.bind(this)
+    });
+    this.create(asteroid, 'asteroids');
+  }
+
+  //onCollision(object: GameObjectsBasicTypes) : { asteroid_split: Asteroid['split']} | { asteroid_destroyed: Asteroid['destroyed']} {
+    onCollision(object: GameObjectsBasicTypes, ship: Ship) {
     this.delete = true;
     this.addScore(this.score);
 
@@ -58,34 +89,63 @@ export default class Asteroid implements GameObjectClass {
       this.create(particle, 'particles');
     }
 
-    // Break into smaller asteroids
-    if(this.radius > 10){
-      for (let i = 0; i < 2; i++) {
-        let asteroid = new Asteroid({
-          size: this.radius/2,
-          position: {
-            x: randomNumBetween(-10, 20)+this.position.x,
-            y: randomNumBetween(-10, 20)+this.position.y
-          },
-          create: this.create.bind(this),
-          addScore: this.addScore.bind(this)
-        });
-        this.create(asteroid, 'asteroids');
-      }
-    }
-    else{
-      let asteroid = new Asteroid({
-        size: 80,
-        position: {
-          x: randomNumBetween(-10, 20)+this.position.x,
-          y: randomNumBetween(-10, 20)+this.position.y
-        },
-        create: this.create.bind(this),
-        addScore: this.addScore.bind(this)
-      });
-      this.create(asteroid, 'asteroids');
-    }
+    if(this.radius > 10)
+      //return { asteroid_split: this.split.bind(this) };
+      this.split();
+    else
+      //return { asteroid_destroyed: this.destroyed.bind(this) };
+      this.destroyed(ship);
   }
+
+  // destroy(){
+  //   this.delete = true;
+  //   this.addScore(this.score);
+
+  //   // Explode
+  //   for (let i = 0; i < this.radius; i++) {
+  //     const particle = new Particle({
+  //       lifeSpan: randomNumBetween(60, 100),
+  //       size: randomNumBetween(1, 3),
+  //       position: {
+  //         x: this.position.x + randomNumBetween(-this.radius/4, this.radius/4),
+  //         y: this.position.y + randomNumBetween(-this.radius/4, this.radius/4)
+  //       },
+  //       velocity: {
+  //         x: randomNumBetween(-1.5, 1.5),
+  //         y: randomNumBetween(-1.5, 1.5)
+  //       }
+  //     });
+  //     this.create(particle, 'particles');
+  //   }
+
+  //   // Break into smaller asteroids
+  //   if(this.radius > 10){
+  //     for (let i = 0; i < 2; i++) {
+  //       let asteroid = new Asteroid({
+  //         size: this.radius/2,
+  //         position: {
+  //           x: randomNumBetween(-10, 20)+this.position.x,
+  //           y: randomNumBetween(-10, 20)+this.position.y
+  //         },
+  //         create: this.create.bind(this),
+  //         addScore: this.addScore.bind(this)
+  //       });
+  //       this.create(asteroid, 'asteroids');
+  //     }
+  //   }
+  //   else{
+  //     let asteroid = new Asteroid({
+  //       size: 80,
+  //       position: {
+  //         x: randomNumBetweenExcluding(0, $screen.width, myShip.position.x-60, myShip.position.x+100),
+  //         y: randomNumBetweenExcluding(0, $screen.height, myShip.position.y-60, myShip.position.y+100)
+  //       },
+  //       create: this.create.bind(this),
+  //       addScore: this.addScore.bind(this)
+  //     });
+  //     this.create(asteroid, 'asteroids');
+  //   }
+  // }
 
   render(state: RenderT){
     // Move

@@ -1,12 +1,12 @@
 import { rotatePoint } from '../functional/helpers';
 import type Ship from './Ship';
-import type { Point , RenderT } from '../functional/Types';
+import type { Collidable, GameObjectClass, Point , RenderT } from '../functional/Types';
 
 export type BulletArgs = {
   ship: Ship
 };
 
-export default class Bullet {
+export default class Bullet implements GameObjectClass, Collidable {
   private bullet: void;
   position: Point;
   velocity: Point;
@@ -27,6 +27,11 @@ export default class Bullet {
       y:posDelta.y / 2
     };
     this.radius = 2;
+  }
+
+  onCollision() {
+    this.destroy();
+    return { bullet_destroy: undefined }
   }
 
   destroy(){

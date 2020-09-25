@@ -7,7 +7,7 @@
   
   import { randomNumBetweenExcluding } from './functional/helpers';
   import { screen, keys, asteroidCount, gameData, topScore } from './functional/Stores'
-  import type { GameObjects, GameObjectsTypes, GameObjectsBasicTypes, CreateObjectT, ScreenDims, ArrowKeys, KeysT } from './functional/Types';
+  import type { GameObjects, CollidableGameObjectTypes, GameObjectsBasicTypes, CreateObjectT, Collidable } from './functional/Types';
 
 	// const KEY = {
 	// 	LEFT:  37,
@@ -187,8 +187,10 @@ const updateObjects = <T extends keyof GameObjects>(items: GameObjects[T], group
     index++;
   }
 }
+type test = ReturnType<CollidableGameObjectTypes['onCollision']>;
+
 //sprawdza zderzenie sie 2 obiektow np.: czy asteroida zderzyla sie z statkiem
-const checkCollisionsWith = (items1: GameObjectsTypes, items2: GameObjectsTypes) => {
+const checkCollisionsWith = (items1: CollidableGameObjectTypes[], items2: CollidableGameObjectTypes[]) => {
   var a = items1.length - 1;
   var b: number;
   for(a; a > -1; --a){
@@ -197,8 +199,10 @@ const checkCollisionsWith = (items1: GameObjectsTypes, items2: GameObjectsTypes)
       var item1 = items1[a];
       var item2 = items2[b];
       if(checkCollision(item1, item2)){
-        item1.destroy();
-        item2.destroy();
+        // item1.destroy();
+        // item2.destroy();
+        let func1 = item1.onCollision(item2);
+        let func2 = item2.onCollision(item1);
       }
     }
   }
